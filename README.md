@@ -8,6 +8,7 @@ A quite fast scrapper of different stuff from VK
 
 ## Config
 You need to set a VK group in `lib/vk_parser.ex`
+
 Also, need to set up access_token below in `lib/vk_parser.ex`
 
 ### Start application
