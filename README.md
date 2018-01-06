@@ -1,6 +1,6 @@
 # VkParser
 
-The scrapper of different stuff from VK
+A quite fast scrapper of different stuff from VK
 
 ## Installation
 
