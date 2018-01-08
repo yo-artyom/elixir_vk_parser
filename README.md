@@ -7,9 +7,9 @@ A quite fast scrapper of different stuff from VK
 `mix deps.get`
 
 ## Config
-You need to set a VK group in `lib/vk_parser.ex`
+You need to set a VK group in `config/config.exs`
 
-Also, need to set up access_token below in `lib/vk_parser.ex`
+Also, need to set up access_token below in `config/config.exs`
 
 ### Start application
 `mix run --no-halt`
