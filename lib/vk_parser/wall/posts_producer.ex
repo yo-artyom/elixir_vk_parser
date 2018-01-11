@@ -25,36 +25,6 @@ defmodule VkParser.Wall.PostsProducer do
   end
 
   def get_posts(group, offset, count) do 
-     tl get_batch(group, offset, count)
-  end
-  
-  def amount(group) do
-    [amount | _] = get_batch(group, 0, 1)
-    amount
-  end
-
-  defp api_call_url(group, offset, count) do
-    "https://api.vk.com/method/wall.get?domain=#{group}" <>
-      "&count=#{count}&offset=#{offset}&access_token=#{VkParser.access_token}"
-  end
-
-  defp get_batch(group, offset, count) do
-    get_data(group, offset, count)
-  end
-
-  def get_data(group, offset, count) do
-    HTTPotion.get(api_call_url(group, offset, count)).body 
-    |> Poison.Parser.parse! 
-    |> check_errors 
-    |> Map.get("response")
-  end
-
-  defp check_errors(response) do
-    case Map.fetch(response, "error") do
-      {:ok, error} ->
-        throw(error)
-      _ -> 
-        response
-    end
+    VkParser.VkApi.Wall.posts(group, offset, count)
   end
 end

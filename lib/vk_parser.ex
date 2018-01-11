@@ -13,14 +13,16 @@ defmodule VkParser do
 
   def start(_t , _a) do
     import Supervisor.Spec, warn: false
+    VkParser.Likes.LikeStorage.start_link
+    VkParser.Likes.GetLikes.call("rbc")
 
     children = [
-      worker(VkParser.Wall.PostsProducer, [group(), 0]),
-      worker(VkParser.Wall.ProducerConsumer, []),
-      worker(VkParser.Wall.ImageDownloader, [], id: 1),
-      worker(VkParser.Wall.ImageDownloader, [], id: 2),
-      worker(VkParser.Wall.ImageDownloader, [], id: 3),
-      worker(VkParser.Wall.ImageDownloader, [], id: 4)
+      # worker(VkParser.Wall.PostsProducer, [group(), 0]),
+      # worker(VkParser.Wall.ProducerConsumer, []),
+      # worker(VkParser.Wall.ImageDownloader, [], id: 1),
+      # worker(VkParser.Wall.ImageDownloader, [], id: 2),
+      # worker(VkParser.Wall.ImageDownloader, [], id: 3),
+      # worker(VkParser.Wall.ImageDownloader, [], id: 4)
     ]
 
     opts = [strategy: :one_for_one, name: VkParser.Supervisor]
