@@ -1,4 +1,4 @@
-defmodule VkParser.Likes.LikeStorage do
+defmodule VkParser.Wall.PostsStorage do
   use GenServer
 
   def start_link do
@@ -14,7 +14,7 @@ defmodule VkParser.Likes.LikeStorage do
   end
 
   def handle_cast({:push, item}, state) do
-    {:noreply, item ++ state}
+    {:noreply, [item | state ]}
   end
 
   def handle_call(:state, _from, state) do

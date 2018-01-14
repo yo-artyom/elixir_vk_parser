@@ -12,16 +12,15 @@ defmodule VkParser.VkApi do
     end
 
     def get_batch(group, offset,count) do 
-      BalalaikaBear.Wall.get(%{ domain: group,
-                                offset: offset,
-                                count: count,
-                                access_token: VkParser.access_token
-                              })
-      |> case do
-        {:ok, response } -> response
-        {:error, message } -> throw("SUUUUKSSSS"<>message["error_msg"])
-      end
+        BalalaikaBear.Wall.get(%{ domain: group,
+                                  offset: offset,
+                                  count: count,
+                                  access_token: VkParser.access_token
+                                })
+        |> case do
+          {:ok, response } -> response
+          {:error, message } -> throw(message["error_msg"])
+        end
     end
-
   end
 end

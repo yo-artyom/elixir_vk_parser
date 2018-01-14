@@ -13,10 +13,10 @@ defmodule VkParser do
 
   def start(_t , _a) do
     import Supervisor.Spec, warn: false
-    VkParser.Likes.LikeStorage.start_link
-    VkParser.Likes.GetLikes.call("rbc")
 
     children = [
+      worker(VkParser.Wall.PostsStorage, []),
+      worker(VkParser.Wall.Reader.WriteToDb, [group()])
       # worker(VkParser.Wall.PostsProducer, [group(), 0]),
       # worker(VkParser.Wall.ProducerConsumer, []),
       # worker(VkParser.Wall.ImageDownloader, [], id: 1),

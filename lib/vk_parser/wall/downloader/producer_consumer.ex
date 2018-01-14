@@ -1,4 +1,4 @@
-defmodule VkParser.Wall.ProducerConsumer do
+defmodule VkParser.Wall.Downloader.ProducerConsumer do
   @moduledoc """
     Filter for the records.
   """
@@ -13,7 +13,7 @@ defmodule VkParser.Wall.ProducerConsumer do
 
   def init(state) do
     {:producer_consumer, state, 
-      subscribe_to: [{VkParser.Wall.PostsProducer, max_demand: 100}]}
+      subscribe_to: [{VkParser.Wall.Downloader.PostsProducer, max_demand: 100}]}
   end
 
   def handle_events(posts, _from, state) do

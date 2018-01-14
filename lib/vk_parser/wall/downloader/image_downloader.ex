@@ -51,4 +51,3 @@ defmodule VkParser.Wall.ImageDownloader do
     end
   end
 end
-
