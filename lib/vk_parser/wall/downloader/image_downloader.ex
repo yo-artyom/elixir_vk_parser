@@ -1,5 +1,5 @@
 require IEx;
-defmodule VkParser.Wall.ImageDownloader do
+defmodule VkParser.Wall.Downloader.ImageDownloader do
   @moduledoc """
     Downloads images from filtered Vk response
   """
@@ -17,7 +17,7 @@ defmodule VkParser.Wall.ImageDownloader do
 
   def init(state) do
     {:consumer, state, 
-      subscribe_to: [VkParser.Wall.ProducerConsumer]}
+      subscribe_to: [VkParser.Wall.Downloader.ProducerConsumer]}
   end
 
   def handle_events(records, _from, state) do

@@ -61,7 +61,7 @@ defmodule VkParser.Wall.Reader.WriteToDb do
             id: post["id"],
             attachments: post["attachments"],
             likes_count: post["likes"]["count"] ,
-            repost_count: post["reposts"]["count"]
+            reposts_count: post["reposts"]["count"]
           }) 
         end)
     end

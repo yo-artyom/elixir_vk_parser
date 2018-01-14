@@ -8,7 +8,11 @@ defmodule VkParser.Wall.Downloader.PostsProducer do
   alias VkParser.Wall.{PostsStorage, Post}
 
   def start_link(offset \\ 0) do
-    GenStage.start_link(__MODULE__, %{offset: offset}, name: __MODULE__)
+    GenStage.start_link(__MODULE__, 
+                        %{offset: offset,
+                          records: VkParser.Wall.PostsStorage.state
+                         }, 
+                        name: __MODULE__)
   end
 
   def init(state) do
@@ -16,14 +20,12 @@ defmodule VkParser.Wall.Downloader.PostsProducer do
   end
 
   def handle_demand(count, state) do
+    posts = Enum.slice(state.records, 0, count)
     new_state = state 
                 |> Map.replace(:offset, state.offset + count)
-    posts = List.take(VkParser.Wall.PostsStorage.state, count)
+                |> Map.replace(:records, Enum.drop(state.records, count))
     
 
     {:noreply, posts, new_state}
-  end
-
-  defp get_posts(group, offset, count) do 
   end
 end
