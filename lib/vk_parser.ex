@@ -11,18 +11,15 @@ defmodule VkParser do
   """
   use Application
 
+  alias VkParser.Wall.Reader
+  alias VkParser.Wall.Downloader
+
   def start(_t , _a) do
     import Supervisor.Spec, warn: false
 
     children = [
       worker(VkParser.Wall.PostsStorage, []),
-      worker(VkParser.Wall.Reader.WriteToDb, [group()])
-      # worker(VkParser.Wall.PostsProducer, [group(), 0]),
-      # worker(VkParser.Wall.ProducerConsumer, []),
-      # worker(VkParser.Wall.ImageDownloader, [], id: 1),
-      # worker(VkParser.Wall.ImageDownloader, [], id: 2),
-      # worker(VkParser.Wall.ImageDownloader, [], id: 3),
-      # worker(VkParser.Wall.ImageDownloader, [], id: 4)
+      worker(VkParser.Wall.Reader.WriteToDb, [group(), posts_limit()])
     ]
 
     opts = [strategy: :one_for_one, name: VkParser.Supervisor]
@@ -33,6 +30,11 @@ defmodule VkParser do
     {:ok, group } = Application.fetch_env(:vk_parser, :group)
     if group == nil, do: throw("You need to set up group in config!")
     group
+  end
+
+  def posts_limit do
+    {:ok, limit } = Application.fetch_env(:vk_parser, :posts_limit)
+    limit
   end
 
   def access_token do 

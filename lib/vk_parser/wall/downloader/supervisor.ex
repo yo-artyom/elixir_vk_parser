@@ -5,9 +5,13 @@ defmodule VkParser.Wall.Downloader.Supervisor do
   alias VkParser.Wall.Downloader.{PostsProducer, 
                                   ProducerConsumer, 
                                   ImageDownloader}
+  alias VkParser.Wall.PostsStorage
 
   def start do
     import Supervisor.Spec, warn: false
+    if PostsStorage.empty? do
+      throw "PostsStorage is empty, nothing to Download"
+    end
 
     children = [
       worker(PostsProducer, []),

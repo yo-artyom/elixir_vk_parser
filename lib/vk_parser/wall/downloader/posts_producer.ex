@@ -5,12 +5,12 @@ defmodule VkParser.Wall.Downloader.PostsProducer do
 
   use GenStage
 
-  alias VkParser.Wall.{PostsStorage, Post}
+  alias VkParser.Wall.PostsStorage
 
   def start_link(offset \\ 0) do
     GenStage.start_link(__MODULE__, 
                         %{offset: offset,
-                          records: VkParser.Wall.PostsStorage.state
+                          records: PostsStorage.state
                          }, 
                         name: __MODULE__)
   end

@@ -13,6 +13,10 @@ defmodule VkParser.Wall.PostsStorage do
     GenServer.call(__MODULE__, :state)
   end
 
+  def empty? do
+    state() == []
+  end
+
   def handle_cast({:push, item}, state) do
     {:noreply, [item | state ]}
   end
