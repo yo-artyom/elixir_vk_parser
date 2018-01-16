@@ -1,6 +1,9 @@
 require IEx
 defmodule VkParser.VkApi do
   defmodule Wall do
+    @moduledoc """
+      Wrapper for vk requests
+    """
 
     def posts(group, offset, count \\ 100) do
       tl get_batch(group, offset, count)
@@ -11,15 +14,15 @@ defmodule VkParser.VkApi do
       amount
     end
 
-    def get_batch(group, offset,count) do 
-        BalalaikaBear.Wall.get(%{ domain: group,
+    def get_batch(group, offset, count) do 
+        BalalaikaBear.Wall.get(%{domain: group,
                                   offset: offset,
                                   count: count,
                                   access_token: VkParser.access_token
                                 })
         |> case do
-          {:ok, response } -> response
-          {:error, message } -> throw(message["error_msg"])
+          {:ok, response} -> response
+          {:error, message} -> throw(message["error_msg"])
         end
     end
   end

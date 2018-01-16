@@ -1,29 +1,36 @@
 defmodule VkParser do
   @moduledoc """
-    Application for downloading items from VK wall.
-    App is using GenStage for the scraping process. 
+  Application for downloading items from VK wall.
 
-    `Wall.PostsProducer` scrapings posts from a vk wall.
-
-    `ProductConsumer` uses filter to left only records with selected type.
-
-    `Wall.ImageDownloader` is using for the saving images in downloaded folder.
+  ## Wall flow
+  Module Wall responsible for downloads from a group/public wall.  
   """
   use Application
 
-  alias VkParser.Wall.Reader
-  alias VkParser.Wall.Downloader
+  alias VkParser.Wall.{PostsStorage, Reader, Downloader}
 
+  @doc """
+  Starts supervisor for PostsStorage 
+  """
   def start(_t , _a) do
     import Supervisor.Spec, warn: false
 
-    children = [
-      worker(VkParser.Wall.PostsStorage, []),
-      worker(VkParser.Wall.Reader.WriteToDb, [group(), posts_limit()])
-    ]
+    children = [worker(PostsStorage, [])]
 
     opts = [strategy: :one_for_one, name: VkParser.Supervisor]
     Supervisor.start_link(children, opts)
+  end
+
+  @doc """
+  Downloads all the media which is satisfy filters in downloads folder.
+
+  At first, you need to fill database with responses from vk:
+  `VkParser.Wall.Reader.WriteToDb.start`
+  When parsing will be completed the callback will be called.
+  """
+  def start_wall_flow do
+    Reader.WriteToDb.start_link( group(), posts_limit(), 
+                                  &Downloader.Supervisor.start/0)
   end
 
   def group do

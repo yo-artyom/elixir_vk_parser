@@ -18,7 +18,7 @@ defmodule VkParser.Wall.PostsStorage do
   end
 
   def handle_cast({:push, item}, state) do
-    {:noreply, [item | state ]}
+    {:noreply, [item | state]}
   end
 
   def handle_call(:state, _from, state) do

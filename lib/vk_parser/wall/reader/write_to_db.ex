@@ -10,13 +10,20 @@ defmodule VkParser.Wall.Reader.WriteToDb do
   @max_posts_count 100
 
 
-  def start_link(group, limit \\ 1000) do
-    state = %{group: group, limit: limit, offset: 0}
+  def start_link(group, limit \\ 1000, callback \\ nil) do
+    state = %{group: group, limit: limit, 
+              offset: 0, callback: callback}
 
     GenServer.start_link(__MODULE__, state, name: __MODULE__)
+    start
   end
 
+  @doc """
+  Start parsing wall. When Api will return [] or offset >= limit, 
+  than parsing will be stopped and callback will be called.
+  """
   def start do
+    IO.puts("Wall parsing is started...")
     GenServer.cast(__MODULE__, :start)
   end
 
@@ -25,11 +32,12 @@ defmodule VkParser.Wall.Reader.WriteToDb do
     {:noreply, state}
   end
 
-  def parse_in_db(state) do
+  defp parse_in_db(state) do
     posts = get_posts(state.group, state.offset)
 
     if parse_ended?(state, posts) do
-      IO.inspect("Parse is successfull")
+      IO.puts("Parse is successfull")
+      if state.callback, do: state.callback.()
     else
       save_posts(posts)
       new_state = Map.put(state, 
@@ -48,14 +56,15 @@ defmodule VkParser.Wall.Reader.WriteToDb do
     VkParser.VkApi.Wall.posts(group, offset, @max_posts_count)
   end
 
+  # TODO: try ExRated 
   defp sleep do
     :timer.sleep(100)
   end
 
   defp save_posts(response) do
-    spawn fn()->
+    spawn fn() ->
       response 
-      |> Enum.each( fn(post) ->
+      |> Enum.each(fn(post) ->
         PostsStorage.push(
           %Post{ 
             id: post["id"],
