@@ -1,6 +1,8 @@
 require IEx
 defmodule VkParser.Wall.Downloader.PostsProducer do
   @moduledoc """
+  Read PostsStorage for the posts demand created by ImageDowloader.
+  
   """
 
   use GenStage

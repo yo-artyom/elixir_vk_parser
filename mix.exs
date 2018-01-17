@@ -25,7 +25,7 @@ defmodule VkParser.Mixfile do
       {:gen_stage, "~> 0.12"},
       {:balalaika_bear, "~> 0.1.1"},
       {:csv, "~> 2.0.0"},
-      { :statistics, "~> 0.5.0"},
+      {:statistics, "~> 0.5.0"},
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false}
     ]
   end

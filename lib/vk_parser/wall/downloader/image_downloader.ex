@@ -1,9 +1,11 @@
 require IEx;
 defmodule VkParser.Wall.Downloader.ImageDownloader do
   @moduledoc """
-    Downloads images from filtered Vk response
+    Downloads filtered images from Vk response
   """
   use GenStage
+
+  alias VkParser.Wall.Downloader.ProducerConsumer
 
   @doc """
     Acceptable options are `src` and `src_big` 
@@ -17,7 +19,7 @@ defmodule VkParser.Wall.Downloader.ImageDownloader do
 
   def init(state) do
     {:consumer, state, 
-      subscribe_to: [VkParser.Wall.Downloader.ProducerConsumer]}
+      subscribe_to: [ProducerConsumer]}
   end
 
   def handle_events(records, _from, state) do

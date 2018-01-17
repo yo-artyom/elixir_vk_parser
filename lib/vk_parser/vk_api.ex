@@ -1,9 +1,10 @@
 require IEx
 defmodule VkParser.VkApi do
+  @moduledoc """
+    Wrapper for vk requests
+  """
+
   defmodule Wall do
-    @moduledoc """
-      Wrapper for vk requests
-    """
 
     def posts(group, offset, count \\ 100) do
       tl get_batch(group, offset, count)

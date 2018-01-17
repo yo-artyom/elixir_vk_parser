@@ -1,4 +1,7 @@
 defmodule VkParser.Wall.PostsStorage do
+  @moduledoc """
+  Genserver which has list of %Post.
+  """
   use GenServer
 
   def start_link do

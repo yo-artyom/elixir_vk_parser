@@ -1,9 +1,9 @@
 defmodule VkParser do
   @moduledoc """
-  Application for downloading items from VK wall.
+  Application for downloading stuff from VK.
 
   ## Wall flow
-  Module Wall responsible for downloads from a group/public wall.  
+  Module Wall responsible for stuff downloading from a group/public.
   """
   use Application
 
@@ -35,7 +35,7 @@ defmodule VkParser do
 
   def group do
     {:ok, group } = Application.fetch_env(:vk_parser, :group)
-    if group == nil, do: throw("You need to set up group in config!")
+    if group == nil, do: throw("You need to set up a group in the config!")
     group
   end
 

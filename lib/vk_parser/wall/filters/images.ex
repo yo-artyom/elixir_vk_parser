@@ -2,7 +2,7 @@ defmodule VkParser.Wall.Filters.Images do
   @moduledoc """
     Selects only posts with the attachments
   """
-  # TODO: rewrite filter and consumer ( make immutable )
+  # TODO: make immutable. Also refactor Downloader.ImageDownloader
 
   def filter(response) do
     response 
