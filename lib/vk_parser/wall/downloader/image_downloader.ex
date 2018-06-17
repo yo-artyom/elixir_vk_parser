@@ -11,7 +11,7 @@ defmodule VkParser.Wall.Downloader.ImageDownloader do
     Acceptable options are `src` and `src_big` 
   """
   @image_size "src_big"
-  @folder "downloads/#{VkParser.group}"
+  @folder "downloads/test/"
 
   def start_link do
     GenStage.start_link(__MODULE__, [], [])
@@ -22,34 +22,38 @@ defmodule VkParser.Wall.Downloader.ImageDownloader do
       subscribe_to: [ProducerConsumer]}
   end
 
-  def handle_events(records, _from, state) do
-    check_folder()
+  def handle_events([group_name | posts], _from, state) do
+    check_folder(group_name)
 
-    records |>
+    posts |>
     Enum.each(fn(photo) ->
       download_image(photo[@image_size], 
-                     filename(photo))
+                     path(group_name, filename(photo)))
     end)
 
     {:noreply, [], state}
   end
 
-  defp download_image(url, name) do
+  defp download_image(url, path) do
      body = HTTPotion.get(url).body
-     File.write!(path(name), body)
+     File.write!(path, body)
   end
 
   defp filename(photo) do
     photo["pid"]
   end
 
-  defp path(name) do
-    "#{@folder}/#{name}.png"
+  defp path(group_name, name) do
+    "#{folder(group_name)}/#{name}.png"
   end
 
-  defp check_folder do
-    unless File.dir?(@folder) do 
-      File.mkdir_p(@folder)
+  defp folder(group_name) do
+    "downloads/#{group_name}"
+  end
+
+  defp check_folder(group_name) do
+    unless File.dir?(folder(group_name)) do 
+      File.mkdir_p(folder(group_name))
     end
   end
 end

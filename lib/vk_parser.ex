@@ -3,11 +3,13 @@ defmodule VkParser do
   Application for downloading stuff from VK.
 
   ## Wall flow
-  Module Wall responsible for stuff downloading from a group/public.
+  Module Wall responsible for stuff downloading from groups.
   """
   use Application
 
   alias VkParser.Wall.{PostsStorage, Reader, Downloader}
+
+  require IEx
 
   @doc """
   Starts supervisor for PostsStorage 
@@ -29,19 +31,21 @@ defmodule VkParser do
   When parsing will be completed the callback will be called.
   """
   def start_wall_flow do
-    Reader.WriteToDb.start_link( group(), posts_limit(), 
+    groups()
+    |> Enum.each(fn(group_params) ->
+      Reader.WriteToDb.start_link(group_params["name"],
+                                  group_params["limit"], 
+                                  group_params["offset"],
                                   &Downloader.Supervisor.start/0)
+    end)
   end
 
-  def group do
-    {:ok, group } = Application.fetch_env(:vk_parser, :group)
-    if group == nil, do: throw("You need to set up a group in the config!")
-    group
-  end
-
-  def posts_limit do
-    {:ok, limit } = Application.fetch_env(:vk_parser, :posts_limit)
-    limit
+  @doc """
+  Read group params JSON file
+  """
+  def groups do
+    {:ok, file } = File.read("config/group_params.json")
+    file |> Poison.decode!
   end
 
   def access_token do 

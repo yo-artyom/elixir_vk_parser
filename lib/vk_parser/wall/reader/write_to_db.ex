@@ -10,21 +10,22 @@ defmodule VkParser.Wall.Reader.WriteToDb do
   @max_posts_count 100
 
 
-  def start_link(group, limit \\ 1000, callback \\ nil) do
+  def start_link(group, limit \\ 1000, offset \\ 0,callback \\ nil) do
     state = %{group: group, limit: limit, 
-              offset: 0, callback: callback}
+              offset: offset, callback: callback}
 
-    GenServer.start_link(__MODULE__, state, name: __MODULE__)
-    start
+    GenServer.start_link(__MODULE__, state, name: genserver_name(state))
+
+    start(state)
   end
 
   @doc """
   Start parsing wall. When Api will return [] or offset >= limit, 
   than parsing will be stopped and callback will be called.
   """
-  def start do
-    IO.puts("Wall parsing is started...")
-    GenServer.cast(__MODULE__, :start)
+  def start(state) do
+    IO.puts("Wall parsing for #{state.group} has started...")
+    GenServer.cast(genserver_name(state), :start)
   end
 
   def handle_cast(:start, state) do
@@ -33,19 +34,25 @@ defmodule VkParser.Wall.Reader.WriteToDb do
   end
 
   defp parse_in_db(state) do
+    IO.inspect("Current offset is #{state.offset}")
     posts = get_posts(state.group, state.offset)
 
     if parse_ended?(state, posts) do
-      IO.puts("Parse is successfull")
+      IO.puts("Parsing is successfull")
       if state.callback, do: state.callback.()
     else
-      save_posts(posts)
+      save_posts(state, posts)
       new_state = Map.put(state, 
                           :offset,
                           state.offset + @max_posts_count)
       sleep()
       parse_in_db(new_state)
     end
+  end
+
+  defp genserver_name(state) do
+    "#{__MODULE__}_#{state.group}"
+    |> String.to_atom
   end
 
   defp parse_ended?(state, posts) do
@@ -61,18 +68,20 @@ defmodule VkParser.Wall.Reader.WriteToDb do
     :timer.sleep(100)
   end
 
-  defp save_posts(response) do
+  defp save_posts(state, response) do
+    IO.puts "save called for #{state.group}" 
     spawn fn() ->
       response 
       |> Enum.each(fn(post) ->
         PostsStorage.push(
+          state.group,
           %Post{ 
             id: post["id"],
             attachments: post["attachments"],
             likes_count: post["likes"]["count"] ,
             reposts_count: post["reposts"]["count"]
           }) 
-        end)
+          end)
     end
   end
 end

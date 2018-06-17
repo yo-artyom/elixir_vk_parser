@@ -23,7 +23,7 @@ defmodule VkParser.Mixfile do
       {:httpotion, "~> 3.0.2"},
       {:poison, "~> 3.1"},
       {:gen_stage, "~> 0.12"},
-      {:balalaika_bear, "~> 0.1.1"},
+      {:balalaika_bear, "~> 0.1.2"},
       {:csv, "~> 2.0.0"},
       {:statistics, "~> 0.5.0"},
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false}
