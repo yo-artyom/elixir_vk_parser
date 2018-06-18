@@ -24,8 +24,7 @@ defmodule VkParser.Wall.Downloader.ImageDownloader do
     posts
     |> Enum.map(fn(post) -> post.group_name end)
     |> Enum.uniq
-    |> Enum.each
-    |> check_folder
+    |> Enum.each(&check_folder(&1))
 
     posts |>
     Enum.each(fn(post) ->
