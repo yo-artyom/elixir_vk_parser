@@ -1,5 +1,6 @@
 defmodule VkParser.Wall.Downloader.Supervisor do
   @moduledoc """
+  Start GenStage for image download flow
   """
   
   alias VkParser.Wall.Downloader.{PostsProducer, 

@@ -10,7 +10,7 @@ defmodule VkParser.Wall.Reader.WriteToDb do
   @max_posts_count 100
 
 
-  def start_link(group, limit \\ 1000, offset \\ 0,callback \\ nil) do
+  def start_link(group, limit \\ 1000, offset \\ 0, callback \\ nil) do
     state = %{group: group, limit: limit, 
               offset: offset, callback: callback}
 
@@ -28,17 +28,20 @@ defmodule VkParser.Wall.Reader.WriteToDb do
     GenServer.cast(genserver_name(state), :start)
   end
 
+  def init(args) do
+    {:ok, args}
+  end
+
   def handle_cast(:start, state) do
     parse_in_db(state)
     {:noreply, state}
   end
 
   defp parse_in_db(state) do
-    IO.inspect("Current offset is #{state.offset}")
     posts = get_posts(state.group, state.offset)
 
     if parse_ended?(state, posts) do
-      IO.puts("Parsing is successfull")
+      IO.puts("Parsing for #{state.group} is successfull")
       if state.callback, do: state.callback.()
     else
       save_posts(state, posts)
@@ -69,14 +72,13 @@ defmodule VkParser.Wall.Reader.WriteToDb do
   end
 
   defp save_posts(state, response) do
-    IO.puts "save called for #{state.group}" 
     spawn fn() ->
       response 
       |> Enum.each(fn(post) ->
         PostsStorage.push(
-          state.group,
           %Post{ 
             id: post["id"],
+            group_name: state.group,
             attachments: post["attachments"],
             likes_count: post["likes"]["count"] ,
             reposts_count: post["reposts"]["count"]

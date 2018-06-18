@@ -3,7 +3,8 @@ defmodule VkParser.Wall.Post do
     Struct for the wall post.
   """
   
-  defstruct attachments: %{}, 
+  defstruct group_name: "",
+    attachments: %{}, 
     likes_count: 0, 
     id: 0,
     reposts_count: 0

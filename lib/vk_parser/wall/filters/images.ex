@@ -1,15 +1,18 @@
 defmodule VkParser.Wall.Filters.Images do
   @moduledoc """
-    Selects only posts with the attachments
+    Selects only posts with the photo attachments
   """
-  # TODO: make immutable. Also refactor Downloader.ImageDownloader
-
-  def filter(%{posts: posts}) do
+  def filter(posts) do
     posts 
     |> Stream.filter(&(&1.attachments != nil)) 
-    |> Enum.flat_map( fn(post) ->
-      Enum.filter(post.attachments, &(&1["photo"] != nil)) 
-      |> Enum.map(&(&1["photo"]))
+    |> Enum.filter(fn(post) ->
+      post
+      |> attachemnt_types
+      |> Enum.member?("photo")
     end)
+  end
+
+  defp attachemnt_types(post) do
+    Enum.map(post.attachments, &(&1["type"]))
   end
 end

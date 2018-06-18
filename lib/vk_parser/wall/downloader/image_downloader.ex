@@ -1,4 +1,3 @@
-require IEx;
 defmodule VkParser.Wall.Downloader.ImageDownloader do
   @moduledoc """
     Downloads filtered images from Vk response
@@ -11,7 +10,6 @@ defmodule VkParser.Wall.Downloader.ImageDownloader do
     Acceptable options are `src` and `src_big` 
   """
   @image_size "src_big"
-  @folder "downloads/test/"
 
   def start_link do
     GenStage.start_link(__MODULE__, [], [])
@@ -22,13 +20,20 @@ defmodule VkParser.Wall.Downloader.ImageDownloader do
       subscribe_to: [ProducerConsumer]}
   end
 
-  def handle_events([group_name | posts], _from, state) do
-    check_folder(group_name)
+  def handle_events(posts, _from, state) do
+    posts
+    |> Enum.map(fn(post) -> post.group_name end)
+    |> Enum.uniq
+    |> check_folder
 
     posts |>
-    Enum.each(fn(photo) ->
-      download_image(photo[@image_size], 
-                     path(group_name, filename(photo)))
+    Enum.each(fn(post) ->
+      post
+      |> photo_attachments
+      |> Enum.each(fn(photo) -> 
+        download_image(photo[@image_size], 
+                       path(post.group_name, photo)) 
+      end)
     end)
 
     {:noreply, [], state}
@@ -39,12 +44,20 @@ defmodule VkParser.Wall.Downloader.ImageDownloader do
      File.write!(path, body)
   end
 
-  defp filename(photo) do
-    photo["pid"]
+  defp photo_attachments(post) do
+    post.attachments
+    |> Enum.filter(fn(attachment) ->
+      attachment["type"] == "photo"
+    end)
+    |> Enum.map(&(&1["photo"]))
   end
 
-  defp path(group_name, name) do
-    "#{folder(group_name)}/#{name}.png"
+  defp path(group_name, photo) do
+    "#{folder(group_name)}/#{filename(photo)}.png"
+  end
+
+  defp filename(photo) do
+    photo["pid"]
   end
 
   defp folder(group_name) do

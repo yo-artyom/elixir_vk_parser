@@ -44,13 +44,13 @@ defmodule VkParser do
   Read group params JSON file
   """
   def groups do
-    {:ok, file } = File.read("config/group_params.json")
+    {:ok, file} = File.read("config/group_params.json")
     file |> Poison.decode!
   end
 
   def access_token do 
     case Application.fetch_env(:vk_parser, :access_token) do
-      {:ok, nil } ->
+      {:ok, nil} ->
         case check_access_token_file() do
           :not_found -> throw("Access token isn't setted")
           token -> token
@@ -63,7 +63,7 @@ defmodule VkParser do
     case File.read(".access_token") do
       {:ok, token} ->
         token |> String.replace("\n", "")
-      {:error, _ } -> :not_found
+      {:error, _} -> :not_found
     end
   end
 end

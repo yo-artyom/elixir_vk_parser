@@ -1,12 +1,12 @@
 [
-  { 
-    "name": "pixel.arts",
-    "limit": 200,
-    "offset": 0
-  },
   {
     "name": "wtp_soogood",
-    "limit": 200,
+    "limit": 100,
+    "offset": 0
+  },
+  { 
+    "name": "pixel.arts",
+    "limit": 100,
     "offset": 0
   }
 ]
