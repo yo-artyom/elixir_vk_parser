@@ -6,7 +6,7 @@ defmodule VkParser.Wall.Filters.LikeCount do
   alias VkParser.Wall.Analytics.Math
 
   def filter(posts) do
-    IO.puts "Entered: #{length(posts)}"
+    IO.puts "\nLikeCountFilter: entered: #{length(posts)}"
 
     res = posts
     |> Enum.filter(fn(post) ->
@@ -14,7 +14,7 @@ defmodule VkParser.Wall.Filters.LikeCount do
       post.reposts_count >= Math.median(post.group_name, :reposts_count)
     end)
 
-    IO.puts "Out: #{length(res)}"
+    IO.puts "LikeCountFilter: Out: #{length(res)}\n"
     res
   end
 end

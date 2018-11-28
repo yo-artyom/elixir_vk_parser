@@ -1,17 +1,18 @@
-defmodule VkParser.Wall.Reader.WriteToDb do
+defmodule VkParser.Wall.Fetcher.WriteToDb do
   @moduledoc """
-    Call API and write responses into PostsStorage.
+    Call API and write responses into `PostsStorage`
   """
-
   use GenServer
 
   alias VkParser.Wall.{PostsStorage, Post}
 
   @max_posts_count 100
 
-
   def start_link(group, limit \\ 1000, offset \\ 0, callback \\ nil) do
-    state = %{group: group, limit: limit, 
+    total_posts_amount = VkParser.VkApi.Wall.amount(group)
+    limit = [total_posts_amount, limit ] |> Enum.min
+
+    state = %{group: group, limit: limit,
               offset: offset, callback: callback}
 
     GenServer.start_link(__MODULE__, state, name: genserver_name(state))
@@ -20,18 +21,25 @@ defmodule VkParser.Wall.Reader.WriteToDb do
   end
 
   @doc """
-  Start parsing wall. When Api will return [] or offset >= limit, 
-  than parsing will be stopped and callback will be called.
+  Start parsing wall. 
+  Parsing will be stopped when Api returns [] or offset >= limit.
+  Callback will be called after parsing
   """
   def start(state) do
-    IO.puts("Wall parsing for #{state.group} has started...")
+    IO.puts("""
+    Wall parsing for #{state.group} has started...
+    Total post amount:  #{state.limit}
+    """)
+
     GenServer.cast(genserver_name(state), :start)
   end
 
+  @impl true
   def init(args) do
     {:ok, args}
   end
 
+  @impl true
   def handle_cast(:start, state) do
     parse_in_db(state)
     {:noreply, state}
@@ -48,7 +56,6 @@ defmodule VkParser.Wall.Reader.WriteToDb do
       new_state = Map.put(state, 
                           :offset,
                           state.offset + @max_posts_count)
-      sleep()
       parse_in_db(new_state)
     end
   end
@@ -64,11 +71,6 @@ defmodule VkParser.Wall.Reader.WriteToDb do
 
   defp get_posts(group, offset) do 
     VkParser.VkApi.Wall.posts(group, offset, @max_posts_count)
-  end
-
-  # TODO: try ExRated 
-  defp sleep do
-    :timer.sleep(100)
   end
 
   defp save_posts(state, response) do

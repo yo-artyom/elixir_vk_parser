@@ -1,6 +1,6 @@
 defmodule VkParser.Wall.Post do
   @moduledoc """
-    Struct for the wall post.
+    Struct for a wall post.
   """
   
   defstruct group_name: "",

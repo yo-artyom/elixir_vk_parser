@@ -1,13 +1,13 @@
 defmodule VkParser do
   @moduledoc """
-  Application for downloading stuff from VK.
+  Application for downloading content from VK.
 
-  ## Wall flow
-  Module Wall responsible for stuff downloading from groups.
+  ## Wall Images flow
+  1. Wall parsed and stored inside `VkParser.Wall.PostsStorage`
+  2. Genstage provide Posts to Downloader
   """
   use Application
-
-  alias VkParser.Wall.{PostsStorage, Reader, Downloader}
+  alias VkParser.Wall.{PostsStorage, Fetcher, Downloader}
 
   require IEx
 
@@ -27,13 +27,13 @@ defmodule VkParser do
   Downloads all the media which is satisfy filters in downloads folder.
 
   At first, you need to fill database with responses from vk:
-  `VkParser.Wall.Reader.WriteToDb.start`
+  `VkParser.Wall.Fetcher.WriteToDb.start`
   When parsing will be completed the callback will be called.
   """
-  def start_wall_flow do
+  def start_wall_images_flow do
     groups()
     |> Enum.each(fn(group_params) ->
-      Reader.WriteToDb.start_link(group_params["name"],
+      Fetcher.WriteToDb.start_link(group_params["name"],
                                   group_params["limit"], 
                                   group_params["offset"],
                                   &Downloader.Supervisor.start/0)

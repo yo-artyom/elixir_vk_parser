@@ -1,21 +1,31 @@
 require IEx
 defmodule VkParser.VkApi do
   @moduledoc """
-    Wrapper for vk requests
+  Wrapper for VK requests
   """
 
   defmodule Wall do
+    @moduledoc """
+    """
 
+    @doc """
+    Returns [%{}]. Structure of a single post can be founded here:
+    https://vk.com/dev/wall.post
+    """
     def posts(group, offset, count \\ 100) do
       tl get_batch(group, offset, count)
     end
 
+    @doc """
+    Returns the amount of posts on a group wall
+    """
     def amount(group) do
       [amount | _] = get_batch(group, 0, 1)
       amount
     end
 
-    def get_batch(group, offset, count) do 
+    @doc false
+    defp get_batch(group, offset, count) do
       BalalaikaBear.Wall.get(%{
                                 v: 3,
                                 domain: group,

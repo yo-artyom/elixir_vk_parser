@@ -1,12 +1,22 @@
 [
   {
-    "name": "wtp_soogood",
-    "limit": 100,
+    "name": "dobriememes",
+    "limit": 3000,
     "offset": 0
   },
-  { 
-    "name": "pixel.arts",
-    "limit": 100,
+  {
+    "name": "wtp_soogood",
+    "limit": 3000,
+    "offset": 0
+  },
+  {
+    "name": "anime_memasi",
+    "limit": 3000,
+    "offset": 0
+  },
+  {
+    "name": "tm_top_memes",
+    "limit": 3000,
     "offset": 0
   }
 ]
